@@ -1,0 +1,37 @@
+﻿@model List<Post>
+<section class="recent-posts">
+	<div class="section-title">
+		<h2><span>Tüm Paylaşımlar</span></h2>
+	</div>
+	<div class="card-columns listrecent">
+
+		<!-- begin post -->
+		@foreach(var item in Model)
+		{
+			<div class="card">
+				<a href="post.html">
+					<img class="img-fluid" src="assets/img/demopic/5.jpg" alt="">
+				</a>
+				<div class="card-block">
+					<h2 class="card-title"><a href="@item.Path">@item.Title</a></h2>
+					<h4 class="card-text">@item.Content</h4>
+					<div class="metafooter">
+						<div class="wrapfooter">
+							<span class="meta-footer-thumb">
+								<a href="author.html"><img class="author-thumb" src="https://www.gravatar.com/avatar/e56154546cf4be74e393c62d1ae9f9d4?s=250&amp;d=mm&amp;r=x" alt="Sal"></a>
+							</span>
+							<span class="author-meta">
+								<span class="post-name"><a href="author.html">Sal</a></span><br />
+								<span class="post-date">@item.DateTime.ToShortDateString()</span><span class="dot"></span><span class="post-read">@item.DateTime.ToShortTimeString()</span>
+							</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		}
+		<!-- end post -->
+		
+
+	</div>
+</section>

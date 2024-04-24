@@ -1,0 +1,44 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+	@await Component.InvokeAsync("_HeadComponentPartial")
+</head>
+<body>
+
+	<!-- Begin Nav
+	================================================== -->
+	@await	 Component.InvokeAsync("_NavbarComponentPartial")
+	<!-- End Nav
+	================================================== -->
+	<!-- Begin Site Title
+	================================================== -->
+	@await Component.InvokeAsync("_TitleComponentPartial")
+		<!-- End Site Title
+		================================================== -->
+		<!-- Begin Featured
+		================================================== -->
+		@await  Component.InvokeAsync("_FeatureComponentPartial")
+		<!-- End Featured
+		================================================== -->
+		<!-- Begin List Posts
+		================================================== -->
+		@await Component.InvokeAsync("_BlogListComponentPartial")
+
+		<!-- End List Posts
+		================================================== -->
+		<!-- Begin Footer
+		================================================== -->
+		@await Component.InvokeAsync("_FooterComponentPartial")
+
+		<!-- End Footer
+		================================================== -->
+
+
+	<!-- /.container -->
+	<!-- Bootstrap core JavaScript
+		================================================== -->
+	<!-- Placed at the end of the document so the pages load faster -->
+
+
+</body>
+</html>
