@@ -3,6 +3,8 @@ using BlogApp.DAL.Entities;
 using BlogApp.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BlogApp.Controllers
 {
@@ -36,13 +38,14 @@ namespace BlogApp.Controllers
 		}
 
 
-
-		[HttpGet]
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
 		public IActionResult Create()
 		{
 			return View();  // Create için bir form göster
 		}
-		[HttpPost]
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
 		[ValidateAntiForgeryToken]
 		public IActionResult Create(Post post)
 		{

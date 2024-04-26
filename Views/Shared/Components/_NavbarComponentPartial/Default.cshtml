@@ -1,32 +1,54 @@
-﻿<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top mediumnavigation">
-    <div class="container">
-        <!-- Hamburger Menüsü -->
-        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
 
-        <!-- Site Logosu -->
+
+<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top mediumnavigation">
+    <div class="container">
+
         <a class="navbar-brand" href="@Url.Action("Index", "Default")">
             <img src="~/mediumish-html/assets/img/mefe.png" alt="logo" height="30"> <!-- Resim için yükseklik belirlenebilir -->
         </a>
-
-        <!-- Navbar İçeriği -->
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <!-- Diğer navbar içerikleri... -->
         <div class="collapse navbar-collapse" id="navbarContent">
             <!-- Navbar Menü -->
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="@Url.Action("Create", "Post")">Post</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="http://mefeerbas.com/">Author</a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link text-white" href="@Url.Action("Login", "User")">Giriş<span class="sr-only">(current)</span></a>
-                </li>
-                
-               
-            </ul>
+                @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="@Url.Action("Create", "Post")">Post</a>
+                    </li>
+                }
 
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    <li class="nav-item  active" style="margin-right: 12px;">
+                        <span class="navbar-text text-white">@UserManager.GetUserName(User)</span>
+                    </li>
+                    <li class="nav-item">
+                        <a href="javascript:void(0)" class="nav-link text-gray" onclick="logout()">Çıkış</a>
+                    </li>
+                  
+                }
+                else
+                {
+                    <li class="nav-item active">
+                        <a class="nav-link text-white" href="@Url.Action("Login", "User")">Giriş<span class="sr-only">(current)</span></a>
+                    </li>
+                }
+            </ul>
         </div>
     </div>
 </nav>
+<script>
+    function logout() {
+        var form = document.createElement('form');
+        form.method = 'post';
+        form.action = '/User/Logout';
+        document.body.appendChild(form);
+        form.submit();
+    }
+</script>

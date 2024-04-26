@@ -83,6 +83,13 @@ public class UserController : Controller
         return View(model);
     }
 
+    [HttpPost]
+    public async Task<IActionResult> Logout()
+    {
+        await _signInManager.SignOutAsync();
+        return RedirectToAction("Index","Default");
+    }
+
     private void AddErrors(IdentityResult result)
 	{
 		foreach (var error in result.Errors)
