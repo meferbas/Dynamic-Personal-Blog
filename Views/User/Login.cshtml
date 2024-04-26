@@ -1,0 +1,36 @@
+﻿@model BlogApp.ViewModels.LoginViewModel
+
+<div class="col-md-12 mt-5">
+    <div class="card">
+        <div class="card-header">
+            Giriş Yap
+        </div>
+        <div class="card-body">
+            <form asp-action="Login" asp-controller="User" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group">
+                    <label asp-for="UserName">Kullanıcı Adı</label>
+                    <input asp-for="UserName" class="form-control" />
+                    <span asp-validation-for="UserName" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Password">Şifre</label>
+                    <input asp-for="Password" type="password" class="form-control" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <div class="form-group form-check">
+                    <input type="checkbox" id="rememberMe" name="RememberMe" class="form-check-input" />
+                    <label for="rememberMe" class="form-check-label">Beni Hatırla</label>
+                </div>
+
+                <button type="submit" class="btn btn-success">Giriş</button>
+            </form>
+            <div class="mt-3">
+                Henüz hesabınız yok mu? <a href="@Url.Action("Register", "User")">Hemen kayıt olun!</a>
+            </div>
+        </div>
+    </div>
+</div>
