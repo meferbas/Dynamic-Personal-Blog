@@ -18,8 +18,8 @@
             <ul class="navbar-nav ml-auto">
                 @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
                 {
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="@Url.Action("Create", "Post")">Post</a>
+                    <li class="nav-item" style="margin-right: 12px;">
+                        <a class="nav-link text-white" href="@Url.Action("List", "Post")">Post</a>
                     </li>
                 }
 

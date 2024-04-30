@@ -6,12 +6,12 @@ namespace BlogApp.DAL.Context
 {
     public class MyBlogContext : IdentityDbContext<User>
 	{
-		public MyBlogContext(DbContextOptions<MyBlogContext> options) : base(options)
+		public MyBlogContext(DbContextOptions<MyBlogContext> options) : base(options) // Dependency Injection ile DbContextOptions<MyBlogContext> alınıyor
 		{
 		}
 
-		public DbSet<Post> Posts { get; set; }
-        public DbSet<PostDetail> PostDetails { get; set; }
+		public DbSet<Post> Posts { get; set; } // Posts tablosu
+        public DbSet<PostDetail> PostDetails { get; set; } // PostDetails tablosu
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
@@ -22,8 +22,8 @@ namespace BlogApp.DAL.Context
 						.WithOne(pd => pd.Post) // Her PostDetail tam olarak bir Post'a bağlı
 						.HasForeignKey(pd => pd.PostId); // ForeignKey tanımı
 		}
-		public DbSet<Footer> Footers { get; set; }
-		public DbSet<Title> Titles { get; set; }
+		public DbSet<Footer> Footers { get; set; } // Footers tablosu
+		public DbSet<Title> Titles { get; set; } // Titles tablosu
 
 
 

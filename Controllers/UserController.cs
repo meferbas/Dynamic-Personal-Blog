@@ -2,19 +2,25 @@
 using Microsoft.AspNetCore.Identity;
 using BlogApp.DAL.Entities; // User sınıfınızın olduğu namespace
 using BlogApp.ViewModels; // View modellerinizin olduğu namespace
+using BlogApp.Services;
+using Microsoft.Extensions.Options;
+using System.Net.Mail;
+using System.Net;
 
 public class UserController : Controller
 {
-	private readonly UserManager<User> _userManager;
-	private readonly SignInManager<User> _signInManager;
+    private readonly UserManager<User> _userManager;
+    private readonly SignInManager<User> _signInManager;
+    private readonly EmailSettings _emailSettings;
 
-	public UserController(UserManager<User> userManager, SignInManager<User> signInManager)
-	{
-		_userManager = userManager;
-		_signInManager = signInManager;
-	}
+    public UserController(UserManager<User> userManager, SignInManager<User> signInManager, IOptions<EmailSettings> emailSettings)
+    {
+        _userManager = userManager;
+        _signInManager = signInManager;
+        _emailSettings = emailSettings.Value;
+    }
 
-	public IActionResult Index()
+    public IActionResult Index()
 	{
 		return View();
 	}
@@ -32,21 +38,31 @@ public class UserController : Controller
             return View(model);
         }
 
+        var user = await _userManager.FindByNameAsync(model.UserName); // veya FindByEmailAsync kullanabilirsiniz
+        if (user != null && !await _userManager.IsEmailConfirmedAsync(user))
+        {
+            ModelState.AddModelError(string.Empty, "You must confirm your email to log in.");
+            return View(model);
+        }
+
         if (string.IsNullOrWhiteSpace(model.UserName))
         {
             ModelState.AddModelError(string.Empty, "Kullanıcı adı boş olamaz.");
-            return View(model); // Kullanıcıyı aynı sayfaya geri yönlendirerek hata mesajını gösterin
+            return View(model);
         }
 
         var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, lockoutOnFailure: false);
         if (result.Succeeded)
         {
-            return RedirectToAction("Index", "Default"); // Giriş başarılıysa, başka bir sayfaya yönlendirin
+            return RedirectToAction("Index", "Default");
         }
-
-        ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-        return View(model); // Başarısız giriş denemesi durumunda kullanıcıya hata mesajını gösterin
+        else
+        {
+            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+            return View(model);
+        }
     }
+
 
 
 
@@ -57,24 +73,34 @@ public class UserController : Controller
 		return View();
 	}
 
-	[HttpPost]
+    [HttpPost]
     public async Task<IActionResult> Register(RegisterViewModel model)
     {
         if (ModelState.IsValid)
         {
             var user = new User
             {
-                UserName = model.Email, // Kullanıcı adı olarak e-posta kullanılıyor
+                UserName = model.UserName, // Kullanıcı adı olarak e-posta kullanılıyor
                 Email = model.Email,
-                FirstName = model.FirstName, // FirstName ekleniyor
-                LastName = model.LastName   // LastName ekleniyor
+                FirstName = model.FirstName,
+                LastName = model.LastName
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
-                await _signInManager.SignInAsync(user, isPersistent: false);
-                return RedirectToAction("Index","Default");
+                // Token oluştur
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+                // Geri arama URL'si oluştur
+                var callbackUrl = Url.Action("ConfirmEmail", "User",
+                    new { userId = user.Id, token = token }, protocol: Request.Scheme);
+
+                // E-posta gönder
+                await SendConfirmationEmail(user.Email, callbackUrl);
+
+                // Kayıt sonrası bilgilendirme veya başka bir sayfaya yönlendirme
+                return RedirectToAction("Index", "Default");
             }
 
             AddErrors(result);
@@ -82,6 +108,56 @@ public class UserController : Controller
 
         return View(model);
     }
+
+
+    private async Task SendConfirmationEmail(string email, string callbackUrl)
+    {
+        using (var client = new SmtpClient("smtp.example.com", 587))
+        {
+
+            client.Host = _emailSettings.MailServer;
+            client.Port = _emailSettings.MailPort;
+            client.EnableSsl = true;
+            client.Credentials = new NetworkCredential(_emailSettings.Sender, _emailSettings.Password);
+
+            var mailMessage = new MailMessage
+            {
+                From = new MailAddress(_emailSettings.Sender, _emailSettings.SenderName),
+                Subject = "Confirm your email",
+                Body = $"Please confirm your email by clicking here: <a href='{callbackUrl}'>link</a>",
+                IsBodyHtml = true
+            };
+            mailMessage.To.Add(email);
+
+            await client.SendMailAsync(mailMessage);
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> ConfirmEmail(string userId, string token)
+    {
+        if (userId == null || token == null)
+        {
+            return RedirectToAction("Error", "Home");
+        }
+
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            ViewBag.ErrorMessage = $"The User ID {userId} is invalid";
+            return View("Error");
+        }
+
+        var result = await _userManager.ConfirmEmailAsync(user, token);
+        if (result.Succeeded)
+        {
+            return View("ConfirmEmailSuccess");
+        }
+
+        ViewBag.ErrorTitle = "Email cannot be confirmed";
+        return View("Error");
+    }
+
 
     [HttpPost]
     public async Task<IActionResult> Logout()
