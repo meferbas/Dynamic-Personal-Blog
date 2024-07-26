@@ -2,111 +2,157 @@
 @{
     ViewData["Title"] = "Create";
 }
-
-
-
-
+<head>
+    <link rel="stylesheet" href="~/css/create.css" />
+</head>
 <!-- CSRF koruması için AntiForgeryToken -->
 <form asp-action="Create" method="post">
     @Html.AntiForgeryToken()
-    
-    <div class="container mt-3">
-        <div class="row">  <!-- Ana satır, sayfayı ikiye böleceğiz -->
-            <!-- Sol Sütun: Post Alanları -->
-            <div class="col-md-6">  <!-- Sol yarı -->
-                <h3>Post Bilgileri</h3>  <!-- Sol sütun başlığı -->
-                <div class="mb-3">  <!-- Her bir form kontrolü için alt boşluk -->
-                    <label class="form-label">Başlık</label>
-                    <input type="text" class="form-control" name="Title" placeholder="Başlık girin" required />
-                </div>
 
-                <div class="mb-3">
-                    <label class="form-label">İçerik</label>
-                    <textarea class="form-control" name="Content" rows="3" placeholder="İçeriği girin" required></textarea>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Yol (Path)</label>
-                    <input type="text" class="form-control" name="Path" placeholder="Yol girin" />
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Resim URL</label>
-                    <input type="text" class="form-control" name="ImageUrl" placeholder="Resim URL'si girin" />
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Tarih ve Saat</label>
-                    <input type="datetime-local" class="form-control" name="DateTime" required />
-                </div>
+    <div class="container mt-3 ">
+        <div class="login-container">
+            <div class="card-header text-center">
+                <h2>Yeni Post Oluştur</h2> <br />
             </div>
-            
-            <!-- Sağ Sütun: PostDetail Alanları -->
-            <div class="col-md-6">  <!-- Sağ yarı -->
-                <h3>Post Detayları</h3>  <!-- Sağ sütun başlığı -->
-                <div class="mb-3">
-                    <label class="form-label">Detay Başlığı</label>
-                    <input type="text" class="form-control" name="PostDetail.Title" placeholder="Detay başlığı girin" required />
-                </div>
+            <div class="card-body login-card">
+                <form asp-action="Create" method="post">
+                    @Html.AntiForgeryToken()
 
-                <div class="mb-3">
-                    <label class="form-label">Detay İçeriği</label>
-                    <textarea class="form-control" name="PostDetail.Content" rows="3" placeholder="Detay içeriğini girin" required></textarea>
-                </div>
+                    <div class="row">
+                        <!-- Sol Sütun: Post Alanları -->
+                        <div class="col-md-6">
+                            <h4>Post Bilgileri</h4> <br />
+                            <div class="mb-3">
+                                <label class="form-label">Başlık</label>
+                                <input type="text" class="form-control" name="Title" placeholder="Başlık girin" required />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">İçerik</label>
+                                <textarea class="form-control" name="Content" rows="3" placeholder="İçeriği girin" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Yol (Path)</label>
+                                <input type="text" class="form-control" name="Path" placeholder="Yol girin" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Resim URL</label>
+                                <input type="text" class="form-control" name="ImageUrl" placeholder="Resim URL'si girin" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Tarih ve Saat</label>
+                                <input type="datetime-local" class="form-control" name="DateTime" required />
+                            </div>
+                        </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Detay İçeriği 2</label>
-                    <textarea class="form-control" name="PostDetail.Content2" rows="3" placeholder="Detay içeriğini girin" /></textarea>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Detay İçeriği 3</label>
-                    <textarea class="form-control" name="PostDetail.Content3" rows="3" placeholder="Detay içeriğini girin" /></textarea>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Detay İçeriği 4</label>
-                    <textarea class="form-control" name="PostDetail.Content4" rows="3" placeholder="Detay içeriğini girin" /></textarea>
-                </div>
+                        <!-- Sağ Sütun: PostDetail Alanları -->
+                        <div class="col-md-6">
+                            <h4>Post Detayları</h4> <br />
+                            <div class="mb-3">
+                                <label class="form-label">İçerik Başlığı</label>
+                                <input type="text" class="form-control" name="PostDetail.Title" placeholder="İçerik başlığı girin" required />
+                            </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Anahtar Kelime 1</label>
-                    <input type="text" class="form-control" name="PostDetail.KeyWord" placeholder="Anahtar kelime girin" />
-                </div>
+                            <!-- Detay İçeriği Seçim -->
+                            <div class="mb-3">
+                                <label class="form-label">İçerik yazısının kaç bölümden oluşmasını istiyorsunuz?</label>
+                                <select id="detailContentCount" class="form-control" onchange="updateDetailContentFields()">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                </select>
+                            </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Anahtar Kelime 2</label>
-                    <input type="text" class="form-control" name="PostDetail.KeyWord2" placeholder="Anahtar kelime girin" />
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Anahtar Kelime 3</label>
-                    <input type="text" class="form-control" name="PostDetail.KeyWord3" placeholder="Anahtar kelime girin" />
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Anahtar Kelime 4</label>
-                    <input type="text" class="form-control" name="PostDetail.KeyWord4" placeholder="Anahtar kelime girin" />
-                </div>
+                            <!-- Detay İçeriği Alanları -->
+                            <div id="detailContentFields">
+                                <div class="mb-3">
+                                    <label class="form-label">Detay İçeriği 1</label>
+                                    <textarea class="form-control" name="PostDetail.Content1" rows="3" placeholder="Detay içeriğini girin" required></textarea>
+                                </div>
+                            </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Detayın Yolu (Path)</label>
-                    <input type="text" class="form-control" name="PostDetail.Path" placeholder="Detayın yolunu girin" />
-                </div>
+                            <!-- Anahtar Kelime Seçim -->
+                            <div class="mb-3">
+                                <label class="form-label">Kaç tane anahtar kelime girmek istiyorsunuz?</label>
+                                <select id="keywordCount" class="form-control" onchange="updateKeywordFields()">
+                                    <option value="0">0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                </select>
+                            </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Detay Resim URL'si</label>
-                    <input type="text" class="form-control" name="PostDetail.ImageUrl" placeholder="Resim URL'si girin" />
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Tarih ve Saat</label>
-                    <input type="datetime-local" class="form-control" name="PostDetail.DateTime" required />
-                </div>
-            </div>
-        </div>
+                            <!-- Anahtar Kelime Alanları -->
+                            <div id="keywordFields">
+                                <div class="mb-3">
+                                    <label class="form-label">Anahtar Kelime 1</label>
+                                    <input type="text" class="form-control" name="PostDetail.KeyWord1" placeholder="Anahtar kelime girin" />
+                                </div>
+                            </div>
 
-        <!-- Kaydet Butonu -->
-        <div class="row mt-3">  <!-- Düğme için ekstra boşluk -->
-            <div class="col-md-12 text-center">  <!-- Ortalanmış düğme -->
-                <button type="submit" class="btn btn-primary">Kaydet</button>  <!-- Birincil buton -->
+                            <div class="mb-3">
+                                <label class="form-label">İçeriğin Yolu (Path)</label>
+                                <input type="text" class="form-control" name="PostDetail.Path" placeholder="Detayın yolunu girin" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">İçeriğin Resim URL'si</label>
+                                <input type="text" class="form-control" name="PostDetail.ImageUrl" placeholder="Resim URL'si girin" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Tarih ve Saat</label>
+                                <input type="datetime-local" class="form-control" name="PostDetail.DateTime" required />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Kaydet Butonu -->
+                    <div class="row mt-3">
+                        <div class="col-md-12 text-center">
+                            <button type="submit" class="btn btn-primary">Kaydet</button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 </form>
 
+<script>
+    function updateDetailContentFields() {
+        const count = document.getElementById('detailContentCount').value;
+        const container = document.getElementById('detailContentFields');
+        container.innerHTML = '';
+        for (let i = 1; i <= count; i++) {
+            const div = document.createElement('div');
+            div.className = 'mb-3';
+            div.innerHTML = `
+                    <label class="form-label">${i}. İçerik Yazısı </label>
+                <textarea class="form-control" name="PostDetail.Content${i}" rows="3" placeholder="Detay içeriğini girin" ${i === 1 ? 'required' : ''}></textarea>
+            `;
+            container.appendChild(div);
+        }
+    }
+
+    function updateKeywordFields() {
+        const count = document.getElementById('keywordCount').value;
+        const container = document.getElementById('keywordFields');
+        container.innerHTML = '';
+        for (let i = 1; i <= count; i++) {
+            const div = document.createElement('div');
+            div.className = 'mb-3';
+            div.innerHTML = `
+                    <label class="form-label"> ${i}. Anahtar Kelime</label>
+                <input type="text" class="form-control" name="PostDetail.KeyWord${i}" placeholder="Anahtar kelime girin" />
+            `;
+            container.appendChild(div);
+        }
+    }
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+        updateDetailContentFields();
+        updateKeywordFields();
+    });
+</script>

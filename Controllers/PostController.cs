@@ -21,6 +21,8 @@ namespace BlogApp.Controllers
 		{
 			var currentPost = _context.Posts
 									  .Include(p => p.PostDetails) // Post ile ilişkili detaylar yükleniyor
+									  .Include(p => p.Comments) // Post ile ilişkili yorumlar yükleniyor
+									  .ThenInclude(c => c.User) // Yorum yapan kullanıcılar yükleniyor
 									  .FirstOrDefault(p => p.PostId == id); // Sadece belirli bir ID'ye sahip post
 
 			if (currentPost == null)
@@ -30,14 +32,16 @@ namespace BlogApp.Controllers
 
 			var postViewModel = new PostViewModel // PostViewModel nesnesi oluşturuluyor
 			{
+				CurrentPost = currentPost,
+				Comments = currentPost.Comments.ToList(),
 				PostDetails = currentPost.PostDetails.ToList(),
-				Posts = _context.Posts.ToList() // Tüm postları yükle
+				Posts = _context.Posts.ToList() // Diğer tüm postlar yükleniyor
 			};
 
-			return View(postViewModel); // PostViewModel'i kullanarak View'ı döndür
+			return View(postViewModel); // PostViewModel ile view döndürülüyor
 		}
 
-        [HttpGet]
+		[HttpGet]
         [Authorize(Roles = "Admin")] // Sadece Admin rolüne sahip kullanıcılar bu işlemi yapabilir
         public IActionResult List()
         {

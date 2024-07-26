@@ -4,28 +4,27 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace BlogApp.DAL.Context
 {
-    public class MyBlogContext : IdentityDbContext<User>
+	public class MyBlogContext : IdentityDbContext<User>
 	{
-		public MyBlogContext(DbContextOptions<MyBlogContext> options) : base(options) // Dependency Injection ile DbContextOptions<MyBlogContext> alınıyor
+		public MyBlogContext(DbContextOptions<MyBlogContext> options) : base(options)
 		{
 		}
 
-		public DbSet<Post> Posts { get; set; } // Posts tablosu
-        public DbSet<PostDetail> PostDetails { get; set; } // PostDetails tablosu
+		public DbSet<Post> Posts { get; set; }
+		public DbSet<PostDetail> PostDetails { get; set; }
+		public DbSet<Comment> Comments { get; set; } // Yorumlar tablosu eklendi
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
-			base.OnModelCreating(modelBuilder); // Identity ile ilgili yapılandırmaları eklemek için bu satır önemli ve ilk sırada olmalı
+			base.OnModelCreating(modelBuilder);
 
 			modelBuilder.Entity<Post>()
-						.HasMany(p => p.PostDetails) // Post ve PostDetails arasında bir-çok ilişki kur
-						.WithOne(pd => pd.Post) // Her PostDetail tam olarak bir Post'a bağlı
-						.HasForeignKey(pd => pd.PostId); // ForeignKey tanımı
+						.HasMany(p => p.PostDetails)
+						.WithOne(pd => pd.Post)
+						.HasForeignKey(pd => pd.PostId);
 		}
-		public DbSet<Footer> Footers { get; set; } // Footers tablosu
-		public DbSet<Title> Titles { get; set; } // Titles tablosu
 
-
-
+		public DbSet<Footer> Footers { get; set; }
+		public DbSet<Title> Titles { get; set; }
 	}
 }

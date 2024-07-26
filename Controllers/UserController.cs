@@ -31,43 +31,43 @@ public class UserController : Controller
 		return View();
 	}
     [HttpPost]
-    public async Task<IActionResult> Login(LoginViewModel model)
-    {
-        if (!ModelState.IsValid)
-        {
-            return View(model);
-        }
+	public async Task<IActionResult> Login(LoginViewModel model)
+	{
+		if (!ModelState.IsValid)
+		{
+			if (string.IsNullOrWhiteSpace(model.UserName))
+			{
+				ModelState.AddModelError(nameof(model.UserName), "Kullanıcı adı boş olamaz.");
+			}
+			if (string.IsNullOrWhiteSpace(model.Password))
+			{
+				ModelState.AddModelError(nameof(model.Password), "Şifre boş olamaz.");
+			}
+			return View(model);
+		}
 
-        var user = await _userManager.FindByNameAsync(model.UserName); // veya FindByEmailAsync kullanabilirsiniz
-        if (user != null && !await _userManager.IsEmailConfirmedAsync(user))
-        {
-            ModelState.AddModelError(string.Empty, "You must confirm your email to log in.");
-            return View(model);
-        }
+		var user = await _userManager.FindByNameAsync(model.UserName);
+		if (user != null && !await _userManager.IsEmailConfirmedAsync(user))
+		{
+			ModelState.AddModelError(string.Empty, "Giriş yapabilmeniz için email doğrulaması yapmanız gerekmektedir.");
+			return View(model);
+		}
 
-        if (string.IsNullOrWhiteSpace(model.UserName))
-        {
-            ModelState.AddModelError(string.Empty, "Kullanıcı adı boş olamaz.");
-            return View(model);
-        }
+		var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, lockoutOnFailure: false);
 
-        var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, lockoutOnFailure: false);
-        if (result.Succeeded)
-        {
-            return RedirectToAction("Index", "Default");
-        }
-        else
-        {
-            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-            return View(model);
-        }
-    }
+		if (!result.Succeeded)
+		{
+			ModelState.AddModelError(string.Empty, "Hatalı şifre veya kullanıcı adı.");
+			return View(model);
+		}
 
-
-
+		return RedirectToAction("Index", "Default");
+	}
 
 
-    [HttpGet]
+
+
+	[HttpGet]
 	public IActionResult Register()
 	{
 		return View();
@@ -100,7 +100,7 @@ public class UserController : Controller
                 await SendConfirmationEmail(user.Email, callbackUrl);
 
                 // Kayıt sonrası bilgilendirme veya başka bir sayfaya yönlendirme
-                return RedirectToAction("Index", "Default");
+                return RedirectToAction("Login", "User");
             }
 
             AddErrors(result);

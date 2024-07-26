@@ -1,0 +1,21 @@
+﻿body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    margin: 0;
+}
+.login-card {
+    width: 100%;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: rgba(255, 255, 255, 0.5); /* Beyaz arka plan ve %50 saydamlık */
+}
+
+.card-header {
+    padding 20px;
+    background-color: rgba(255, 255, 255, 0.5); /* Beyaz arka plan ve %50 saydamlık */
+}

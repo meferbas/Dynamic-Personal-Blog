@@ -9,11 +9,11 @@
 		@foreach(var item in Model)
 		{
 			<div class="card">
-				<a href="post.html">
+				<a href="@Url.Action("Detail", "Post", new { id = item.PostId })">
 					<img class="featured-image img-fluid" src="@item.ImageUrl" alt="">
 				</a>
 				<div class="card-block">
-					<h2 class="card-title"><a href="@item.Path">@item.Title</a></h2>
+					<h2 class="card-title"><a href="@Url.Action("Detail", "Post", new { id = item.PostId })">@item.Title</a></h2>
 					<h4 class="card-text">@item.Content</h4>
 					<div class="metafooter">
 						<div class="wrapfooter">

@@ -4,7 +4,8 @@ namespace BlogApp.ViewModels
 {
 		public class PostViewModel
 		{
-			public Post CurrentPost { get; set; }  
+			public Post CurrentPost { get; set; }
+			public List<Comment> Comments { get; set; }
 			public List<Post> Posts { get; set; } 
 			public List<PostDetail> PostDetails { get; set; }  
 		}
